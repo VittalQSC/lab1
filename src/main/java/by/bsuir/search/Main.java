@@ -13,10 +13,6 @@ import java.util.List;
  */
 public class Main {
     public static void main(String[] args) {
-//        List<FileContainer> files = Document.readsFileFromDirectory("docs/");
-//
-//        TermsManager tm = new TermsManager(files);
-//        List<Double> result = tm.search("samsung", "ITCompanies");
         Interface.listen();
     }
 }

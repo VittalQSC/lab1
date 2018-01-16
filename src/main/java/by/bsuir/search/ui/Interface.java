@@ -26,7 +26,12 @@ public class Interface {
                 System.out.print("Enter something : ");
                 String input = br.readLine();
                 if (input.contains("select ")) {
-                    category = input.split(" ")[1];
+                    if (!input.split(" ")[1].equals("*")) {
+
+                        category = input.split(" ")[1];
+                    } else {
+                        category = "";
+                    }
                     continue;
                 }
 
@@ -41,6 +46,10 @@ public class Interface {
                 for (int i = 0; i < files.size(); i++) {
                     FileContainer file = files.get(i);
                     System.out.println(file.getName() + ": " + result.get(i));
+                    System.out.println("*********************");
+                    System.out.println(file.getContent().replaceAll("(?i)" + input, "[" + input + "]"));
+                    System.out.println("");
+                    System.out.println("&&&&&&&&&&&&&&&&&&&&&");
                 }
                 System.out.println("-----------\n");
             }
