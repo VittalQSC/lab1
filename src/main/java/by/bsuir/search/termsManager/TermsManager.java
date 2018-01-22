@@ -2,6 +2,7 @@ package by.bsuir.search.termsManager;
 
 import by.bsuir.search.document.FileContainer;
 import by.bsuir.search.document.Splitter;
+import by.bsuir.search.rocchio.Learn;
 import by.bsuir.search.rocchio.Rocchio;
 import by.bsuir.search.vector.Vector;
 import by.bsuir.search.vectorSpaceModel.VectorSpaceModel;
@@ -10,11 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TermsManager {
-    private List<List<String>> docsTerms;
+    private List<FileContainer> documents;
 
-    private List<String> eachDocCategory;
+    public List<List<String>> docsTerms;
+
+    public List<String> eachDocCategory;
 
     public TermsManager(List<FileContainer> documents) {
+        this.documents = documents;
         this.eachDocCategory = new ArrayList<>();
         documents.forEach(document -> this.eachDocCategory.add(document.getCategory()));
         this.docsTerms = new ArrayList<>();
@@ -30,7 +34,7 @@ public class TermsManager {
         ArrayList<String> pool = new ArrayList<>();
         for (List<String> docTerms : docsTerms) {
             for (String term : docTerms) {
-                if (!pool.contains(term)) {
+                if (!pool.contains(term) && !pool.equals("")) {
                     pool.add(term);
                 }
             }
@@ -45,7 +49,12 @@ public class TermsManager {
         return pool;
     }
 
-    public ArrayList<Double> search(String searchContent, String category) {
+    public List<ArrayList<Double>> getFilesVectors(List<List<String>> docs) {
+        ArrayList<String> pool = this.getTermsPool("");
+        return Vector.getVectors(docs, pool);
+    }
+
+    public ArrayList<Double> search(String searchContent, String category, List<FileContainer>  learnDocuments) {
         int documentsNum = this.docsTerms.size();
         List<List<String>> docs = this.docsTerms;
 
@@ -72,10 +81,15 @@ public class TermsManager {
             }
         }
 
-        List<Double> searchVector = Rocchio.getQuery(
-                filesVectors.get(docsAndQuery.size() - 1), 0.9, 0.1,
-                positiveVectors, negativeVectors
-        );
+        ArrayList<Double> profileVector = (new Learn(learnDocuments)).getProfileVector(pool, category);
+        List<Double> oldQuery = filesVectors.get(docsAndQuery.size() - 1);
+        List<Double> newQuery = new ArrayList<>();
+        for (int i = 0; i < oldQuery.size(); i++) {
+            newQuery.add(oldQuery.get(i) + profileVector.get(i));
+        }
+
+        List<Double> searchVector = !category.equals("") ? newQuery : filesVectors.get(docsAndQuery.size() - 1);
+
 
         ArrayList<Double> result = new ArrayList<>();
         for (int i = 0; i < documentsNum; i++) {
@@ -85,5 +99,12 @@ public class TermsManager {
         return result;
     }
 
+    public List<FileContainer> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<FileContainer> documents) {
+        this.documents = documents;
+    }
 }
 

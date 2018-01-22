@@ -7,11 +7,14 @@ import by.bsuir.search.termsManager.TermsManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Interface {
     public static void listen () {
         List<FileContainer> files = Document.readsFileFromDirectory("docs/");
+        List<FileContainer> learnFiles = Document.readsFileFromDirectory("learn_docs/");
 
         TermsManager tm = new TermsManager(files);
 
@@ -42,14 +45,33 @@ public class Interface {
 
                 System.out.println("Search : " + input);
                 System.out.println("-----------\n");
-                List<Double> result = tm.search(input, category);
+                List<Double> result = tm.search(input, category, learnFiles);
                 for (int i = 0; i < files.size(); i++) {
                     FileContainer file = files.get(i);
                     System.out.println(file.getName() + ": " + result.get(i));
-                    System.out.println("*********************");
-                    System.out.println(file.getContent().replaceAll("(?i)" + input, "[" + input + "]"));
-                    System.out.println("");
-                    System.out.println("&&&&&&&&&&&&&&&&&&&&&");
+//                    System.out.println("*********************");
+//                    System.out.println(file.getContent().replaceAll("(?i)" + input,
+//                            "<strong>" + input + "</strong>"));
+//                    System.out.println("");
+//                    System.out.println("&&&&&&&&&&&&&&&&&&&&&");
+
+//                    System.out.println("*********************");
+//                    String[] l = file.getContent().toLowerCase().split("\n");
+//                    for (int j = 0; j < l.length; j++) {
+//                        String s = l[j];
+//                        int index = s.indexOf(input);
+//                        int flag = 0;
+//                        while (index != -1) {
+//                            flag = 1;
+//                            System.out.print("L" + (j+1) + "C" + (index + 1) + ", ");
+//                            index = s.indexOf(input, index + 1);
+//                        }
+//                        if (flag == 1) {
+//                            System.out.println();
+//                        }
+//                    }
+//                    System.out.println();
+//                    System.out.println("&&&&&&&&&&&&&&&&&&&&&");
                 }
                 System.out.println("-----------\n");
             }
